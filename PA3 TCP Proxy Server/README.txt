@@ -1,0 +1,9 @@
+INCLUDED:
+./webproxy.c - c program for proxy server
+makefile - file used to build webproxy.c
+
+HOW TO RUN:
+From the command line navigate to the appropriate folder and type make. webproxy.o will build. Type ./webproxy [portnumber] [cache timeout] where portnumber is the port you would like the proxy server to run on and cache timeout is the amount of time you would like to save the file cache.
+
+NOTES AND PROCESS:
+Sever starts by making a connection to the client and listening on that port. When the client requests a webpage the server first checks if the requested data is in the cache by running the url through an MD5 hash and comparing the result with the filenames present in the cache. If the file is in the cache the proxy then checks the age of the file against the user inputted cache timeout value. If data is in the cache and it has not timed out then it is sent back to the client. If the data is not in the cache or is not valid then a check is made to see if the ip address is already in the ip cache and used if it is. Otherwise gethostbyname is called and the ipaddress is resolved. Once all pertinent information has been gathered the socket is built. Blacklisted sites are checked and if the site is blacklisted then a 403 forbidden error is sent back to the client. Assuming the site is not blacklisted the proxy send the appropriate GET requests to the server and forwards the data back to the client. Since the data was not already in the cache it is simultaniously written to the cache and timestamped while it is being written to the client. Each GET request from the client will run on a seperate thread so all cache writing and file reading/writing is threadlocked using flockfile and funlockfile for thread safety. Only GET requests are supported so getting data from HTTPS sites in not possible.
