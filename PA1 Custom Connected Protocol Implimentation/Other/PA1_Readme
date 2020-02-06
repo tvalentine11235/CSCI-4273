@@ -1,0 +1,17 @@
+INCLUDED:
+./Client
+	udp_client.c - c program for client
+	makefile - used to compile udp_client.c
+
+./Server
+	udp_server.c - c program for server
+	makefile - used to compile udp_server.c
+
+HOW TO RUN:
+Open two seperate terminals, one for the client one for the server. From the command line navigate to the appropriate folders and type 'make' to compile the programs. Once made, run the server by typing './server [portnumber]' and the client by typing './client [serverIP] [portnumber]'
+
+NOTES AND PROCESS:
+I did not include any of the test files because the writeup does not specify to, i assume you guys have your own files that you will be using.
+Communication between the server and client is always initiaed with the sender sending an int size that informs the recever of the incoming packet size. This size is used to determine how much to write to the file on the receivers end. At the end of transmission the sender sends a size of -1 indicating all data has been transmitted and the connection is terminated.
+In order to impliment a connected protocol I used a somewhat unorthodox approach because I wanted to figure out a unique solution that I discovered on my own. When I was using UDP, pictures larger than a few dozen KB would become corrupted. I noticed that when a corrupted packet was sent, the packet size sent was also corrupted, usually 4096 or 8192KB instead of the expected 1024KB. I put in a check at both server and client size to make sure the packet size was not greater than 1024KB and if it was to resend the packet size. This has worked for me locally. I have been able to send pictures as large as 5.6MB with no loss locally. 
+Additionally, I just tested the code with a friend running my server software on the other side of town and we were able to send pictures back and forth with no loss.
